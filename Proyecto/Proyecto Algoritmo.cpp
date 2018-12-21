@@ -49,7 +49,8 @@ int codigo_unico();
 int cuantos_digitos(int);
 void actualizar_paciente(char []);
 void modificar_paciente(struct Paciente &);
-
+void reporte(char []);
+void eliminar_paciente(char []);
 struct Nodo *lista = NULL;
 
 int main(){
@@ -293,8 +294,10 @@ void inicio(char user[]){
 	int opcion;
 	do{
 		cout<<"--INICIO--"<<endl;
-		cout<<"1. Ingreso de Pacientes"<<endl;
-		cout<<"2. Actualizar Paciente"<<endl;
+		cout<<"1. Ingreso de pacientes"<<endl;
+		cout<<"2. Actualizar paciente"<<endl;
+		cout<<"3. Reporte en pantalla por paciente"<<endl;
+		cout<<"4. Eliminar paciente"<<endl;
 		cout<<"0. Salir"<<endl;
 		cin>>opcion;
 		system("cls");
@@ -305,6 +308,13 @@ void inicio(char user[]){
 			case 2: 
 				actualizar_paciente(user);
 				break;
+			case 3:
+				reporte(user);
+				cout<<"\n";
+				system("pause");
+				break;
+			case 4:
+				eliminar_paciente(user);
 			case 0: break;
 		}
 		system("cls");
@@ -510,4 +520,87 @@ void modificar_paciente(struct Paciente &nuevo){
 		}
 		system("cls");
 	}while(opcion != 0);
+}
+
+void reporte(char user[]){
+	int codigo;
+	char dir[60];
+	struct Paciente nuevo;
+	
+	strcpy(dir,"C:\\Users\\Israel\\Desktop\\Proyecto Algoritmo\\Pacientes\\");
+	strcat(dir,user);
+	strcat(dir,".txt");
+	
+	cout<<"Ingrese el codigo: ";
+	cin>>codigo;
+	
+	ifstream archivo;
+	
+	archivo.open(dir, ios::in | ios::binary);
+	
+	if(archivo.fail()){
+		exit(-1);
+	}else{
+		while(!archivo.eof()){
+			archivo.read((char *)&nuevo,sizeof(struct Paciente));
+			if(nuevo.cod == codigo){
+				cout<<"Codigo: "<<nuevo.cod<<endl;
+				cout<<"Nombre: "<<nuevo.nombre<<" "<<nuevo.apellido<<endl;
+				cout<<"Telefono: "<<nuevo.tel<<endl;
+				cout<<"Terapias Sugeridas: "<<nuevo.num_TerS<<endl;
+				cout<<"Terapias Recibidas: "<<nuevo.num_TerR<<endl;
+				cout<<"Terapias Pendientes: "<<nuevo.num_TerP<<endl;
+				break;
+			}
+		}
+		archivo.close();
+	}
+}
+
+void eliminar_paciente(char user[]){
+	int codigo;
+	char dir[60],opcion;
+	struct Paciente nuevo;
+	strcpy(dir,"C:\\Users\\Israel\\Desktop\\Proyecto Algoritmo\\Pacientes\\");
+	strcat(dir,user);
+	strcat(dir,".txt");
+	cout<<"Ingrese codigo: ";
+	cin>>codigo;
+	ifstream leer;
+	leer.open(dir,ios::in | ios::binary);
+	if(leer.fail()){
+		exit(-1);
+	}else{
+		ofstream temp;
+		temp.open("C:\\Users\\Israel\\Desktop\\Proyecto Algoritmo\\Pacientes\\temp.txt",ios::app | ios::binary);
+		if(temp.fail()){
+			exit(-1);
+		}else{
+			while(!leer.eof()){
+				leer.read((char *)&nuevo,sizeof(struct Paciente));
+				if(nuevo.cod == codigo){
+					cout<<"Codigo: "<<nuevo.cod<<endl;
+					cout<<"Nombre: "<<nuevo.nombre<<" "<<nuevo.apellido<<endl;
+					cout<<"Telefono: "<<nuevo.tel<<endl;
+					cout<<"Terapias Sugeridas: "<<nuevo.num_TerS<<endl;
+					cout<<"Terapias Recibidas: "<<nuevo.num_TerR<<endl;
+					cout<<"Terapias Pendientes: "<<nuevo.num_TerP<<endl;
+					cout<<"\nEsta seguro de eliminar al paciente? (S/N)";
+					cin>>opcion;
+					if((opcion == 'S') || (opcion == 's')){
+						cout<<"El paciente a sido eliminado CORRECTAMENTE"<<endl;
+					}else{
+						temp.write((char *)&nuevo,sizeof(struct Paciente));
+						cout<<"Vuelva a intentarlo en otro momento"<<endl;
+					}
+				}else{
+					temp.write((char *)&nuevo,sizeof(struct Paciente));
+				}
+			}
+			temp.close();
+		}
+	}
+	leer.close();
+	remove(dir);
+	rename("C:\\Users\\Israel\\Desktop\\Proyecto Algoritmo\\Pacientes\\temp.txt",dir);
 }

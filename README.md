@@ -1,2 +1,3 @@
-# Proyecto de Algoritmos 
-Este proyecto consiste en realizar un programa que permita administrar las terapias de una clinica
+# Proyecto de algoritmos - Manejo de archivos
+*Se creara un programa donde se pueda manejar informacion de una clinica de Fisioterapia*
+
